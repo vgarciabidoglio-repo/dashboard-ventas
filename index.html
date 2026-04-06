@@ -3,144 +3,157 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Swarovski Online · Enero 2026</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Swarovski — Dashboard Ventas Online</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root {
-    --gold: #c8a96e;
-    --gold-light: #e8d5a8;
-    --gold-dark: #a8843e;
-    --black: #0e0e0e;
-    --dark: #1a1a1a;
-    --dark-2: #242424;
-    --dark-3: #2e2e2e;
-    --text-primary: #f0ebe0;
-    --text-secondary: #9a9080;
-    --text-muted: #5a5248;
-    --border: rgba(200,169,110,0.15);
-    --border-soft: rgba(200,169,110,0.08);
-    --danger: #e05050;
-    --danger-bg: rgba(224,80,80,0.12);
-    --success: #6dba7f;
-    --success-bg: rgba(109,186,127,0.12);
-    --warning: #e8c04a;
-    --warning-bg: rgba(232,192,74,0.12);
-    --chart-grid: rgba(200,169,110,0.06);
-    --chart-tick: rgba(200,169,110,0.35);
+    --black: #0a0a0a;
+    --white: #f5f3ee;
+    --gold: #c9a84c;
+    --gold-light: #e8d5a3;
+    --gold-dim: #7a5f28;
+    --crystal: rgba(201,168,76,0.12);
+    --red: #c0392b;
+    --green: #27ae60;
+    --gray: #555;
+    --border: rgba(201,168,76,0.25);
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'DM Sans', sans-serif;
     background: var(--black);
-    color: var(--text-primary);
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
     min-height: 100vh;
-    padding: 0;
+    overflow-x: hidden;
+  }
+
+  /* Background crystal pattern */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse at 20% 20%, rgba(201,168,76,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(201,168,76,0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 32px;
+    position: relative;
+    z-index: 1;
   }
 
   /* HEADER */
-  .page-header {
-    background: var(--dark);
-    border-bottom: 1px solid var(--border);
-    padding: 28px 48px 24px;
+  header {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 28px;
+    margin-bottom: 48px;
     flex-wrap: wrap;
     gap: 16px;
   }
 
-  .brand-block { display: flex; align-items: center; gap: 16px; }
+  .brand {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
 
-  .brand-logo {
-    width: 36px; height: 36px;
-    background: var(--gold);
-    border-radius: 2px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 18px; font-weight: 600;
-    color: var(--dark);
-    flex-shrink: 0;
+  .brand-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.8;
   }
 
   .brand-name {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 22px; font-weight: 500;
-    color: var(--text-primary);
-    letter-spacing: 0.12em;
+    font-size: 42px;
+    font-weight: 300;
+    letter-spacing: 8px;
     text-transform: uppercase;
+    color: var(--white);
+    line-height: 1;
   }
 
   .brand-sub {
-    font-size: 11px; font-weight: 300;
-    color: var(--text-secondary);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-top: 2px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--gold);
+    letter-spacing: 2px;
   }
 
   .header-meta {
     text-align: right;
   }
 
-  .period-label {
-    font-size: 13px; color: var(--text-secondary);
-    margin-bottom: 4px;
+  .header-meta p {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--gray);
+    text-transform: uppercase;
+    line-height: 2;
   }
 
-  .period-value {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 20px; font-weight: 400;
+  /* PERIOD TABS */
+  .period-tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 40px;
+  }
+
+  .tab {
+    padding: 10px 28px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--gray);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .tab.active {
+    background: var(--gold);
+    color: var(--black);
+    border-color: var(--gold);
+  }
+
+  .tab:hover:not(.active) {
+    border-color: var(--gold);
     color: var(--gold);
-  }
-
-  .campaign-badge {
-    display: inline-block;
-    font-size: 10px; font-weight: 500;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    background: var(--warning-bg);
-    color: var(--warning);
-    border: 1px solid rgba(232,192,74,0.25);
-    padding: 3px 10px;
-    border-radius: 2px;
-    margin-top: 6px;
-  }
-
-  /* MAIN CONTENT */
-  .main { padding: 36px 48px 48px; max-width: 1200px; }
-
-  /* SECTION LABELS */
-  .section-label {
-    font-size: 10px; font-weight: 500;
-    letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 14px;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border-soft);
   }
 
   /* KPI GRID */
   .kpi-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 40px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 48px;
   }
 
   .kpi-card {
-    background: var(--dark-2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 20px 22px;
+    background: var(--black);
+    padding: 28px 24px;
     position: relative;
     overflow: hidden;
+    transition: background 0.3s;
   }
 
   .kpi-card::before {
@@ -149,447 +162,659 @@
     top: 0; left: 0; right: 0;
     height: 2px;
     background: var(--gold);
-    opacity: 0.4;
+    opacity: 0;
+    transition: opacity 0.3s;
   }
 
-  .kpi-card.highlight::before { opacity: 1; }
+  .kpi-card:hover { background: rgba(201,168,76,0.04); }
+  .kpi-card:hover::before { opacity: 1; }
 
   .kpi-label {
-    font-size: 10px; font-weight: 500;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 10px;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+    opacity: 0.8;
   }
 
   .kpi-value {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 34px; font-weight: 400;
-    color: var(--text-primary);
+    font-size: 32px;
+    font-weight: 300;
+    color: var(--white);
     line-height: 1;
     margin-bottom: 8px;
   }
 
-  .kpi-value.large { font-size: 28px; }
-
-  .kpi-compare {
-    font-size: 12px; color: var(--text-secondary);
-    display: flex; align-items: center; gap: 6px;
+  .kpi-sub {
+    font-size: 10px;
+    color: var(--gray);
+    letter-spacing: 1px;
   }
 
-  .badge {
-    display: inline-flex; align-items: center; gap: 3px;
-    font-size: 11px; font-weight: 500;
-    padding: 2px 8px; border-radius: 2px;
-  }
-  .badge-danger { background: var(--danger-bg); color: var(--danger); }
-  .badge-success { background: var(--success-bg); color: var(--success); }
-  .badge-warning { background: var(--warning-bg); color: var(--warning); }
-
-  /* PROGRESS BAR */
-  .progress-section {
-    background: var(--dark-2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 22px 24px;
-    margin-bottom: 40px;
+  .kpi-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    padding: 3px 8px;
+    margin-top: 8px;
   }
 
-  .progress-header {
-    display: flex; justify-content: space-between; align-items: baseline;
-    margin-bottom: 12px;
-  }
+  .kpi-badge.up { color: var(--green); border: 1px solid rgba(39,174,96,0.3); }
+  .kpi-badge.down { color: var(--red); border: 1px solid rgba(192,57,43,0.3); }
+  .kpi-badge.neutral { color: var(--gold); border: 1px solid var(--border); }
 
-  .progress-title {
-    font-size: 12px; color: var(--text-secondary);
-    letter-spacing: 0.06em; text-transform: uppercase;
-  }
-
-  .progress-numbers {
+  /* SECTION TITLES */
+  .section-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 18px; color: var(--text-primary);
-  }
-
-  .progress-bar-bg {
-    height: 8px; background: var(--dark-3); border-radius: 2px; overflow: hidden;
-    margin-bottom: 6px;
-  }
-
-  .progress-bar-fill {
-    height: 8px; border-radius: 2px;
-    background: linear-gradient(90deg, var(--gold-dark), var(--gold));
-    transition: width 1s ease;
-  }
-
-  .progress-labels {
-    display: flex; justify-content: space-between;
-    font-size: 10px; color: var(--text-muted);
-  }
-
-  /* CHART GRID */
-  .charts-grid {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--white);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
     gap: 16px;
-    margin-bottom: 16px;
   }
 
-  .charts-grid-2 {
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* CHART CONTAINERS */
+  .charts-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  .chart-box {
+    background: rgba(201,168,76,0.03);
+    border: 1px solid var(--border);
+    padding: 28px;
+  }
+
+  .chart-box-title {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    opacity: 0.8;
+  }
+
+  .chart-wrap {
+    position: relative;
+  }
+
+  /* COMPARISON TABLE */
+  .comparison-section { margin-bottom: 48px; }
+
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  .comp-table th {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    text-align: right;
+    font-weight: 400;
+  }
+
+  .comp-table th:first-child { text-align: left; }
+
+  .comp-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(201,168,76,0.08);
+    text-align: right;
+    color: var(--white);
+    font-size: 12px;
+    transition: background 0.2s;
+  }
+
+  .comp-table td:first-child {
+    text-align: left;
+    color: var(--gold);
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+
+  .comp-table tr:hover td { background: rgba(201,168,76,0.04); }
+
+  .val-up { color: var(--green) !important; }
+  .val-down { color: var(--red) !important; }
+
+  /* PROMO TIMELINE */
+  .promo-section { margin-bottom: 48px; }
+
+  .promo-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 40px;
+    gap: 24px;
   }
 
-  .chart-card {
-    background: var(--dark-2);
+  .promo-month {
     border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 20px 22px;
+    background: rgba(201,168,76,0.03);
+    padding: 24px;
   }
 
-  .chart-title {
-    font-size: 10px; font-weight: 500;
-    letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--text-secondary);
-    margin-bottom: 14px;
-    display: flex; align-items: center; justify-content: space-between;
+  .promo-month h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--gold);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
   }
 
-  .chart-legend {
-    display: flex; gap: 16px;
+  .promo-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+    align-items: flex-start;
   }
 
-  .legend-item {
-    display: flex; align-items: center; gap: 5px;
-    font-size: 10px; color: var(--text-muted);
+  .promo-date {
+    font-size: 10px;
+    color: var(--gold);
+    min-width: 60px;
+    letter-spacing: 1px;
   }
 
-  .legend-dot {
-    width: 10px; height: 3px; border-radius: 1px;
+  .promo-text {
+    font-size: 10px;
+    color: var(--gray);
+    letter-spacing: 0.5px;
+    line-height: 1.6;
   }
 
-  /* HIGHLIGHT DAYS */
-  .days-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 40px;
-  }
-
-  .day-card {
-    background: var(--dark-3);
-    border: 1px solid var(--border-soft);
-    border-radius: 4px;
-    padding: 14px 16px;
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
   }
 
-  .day-label { font-size: 11px; color: var(--text-secondary); }
-  .day-date { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--text-primary); margin-top: 2px; }
-  .day-value { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--gold); text-align: right; }
-  .day-sub { font-size: 10px; color: var(--text-muted); text-align: right; margin-top: 2px; }
-
-  /* FOOTER */
-  .page-footer {
-    border-top: 1px solid var(--border-soft);
-    padding: 20px 48px;
-    display: flex; justify-content: space-between; align-items: center;
-    flex-wrap: wrap; gap: 12px;
+  footer p {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gray);
   }
 
-  .footer-note { font-size: 11px; color: var(--text-muted); }
-  .footer-brand { font-family: 'Cormorant Garamond', serif; font-size: 13px; color: var(--text-muted); letter-spacing: 0.1em; }
+  /* Panel visibility */
+  .panel { display: none; }
+  .panel.active { display: block; }
 
-  @media (max-width: 900px) {
-    .page-header, .main, .page-footer { padding-left: 24px; padding-right: 24px; }
-    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-    .charts-grid, .charts-grid-2 { grid-template-columns: 1fr; }
-    .days-grid { grid-template-columns: repeat(2, 1fr); }
+  /* Responsive */
+  @media (max-width: 768px) {
+    .brand-name { font-size: 28px; letter-spacing: 4px; }
+    .charts-row { grid-template-columns: 1fr; }
+    .promo-grid { grid-template-columns: 1fr; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
   }
 </style>
 </head>
 <body>
+<div class="wrapper">
 
-<header class="page-header">
-  <div class="brand-block">
-    <div class="brand-logo">S</div>
-    <div>
-      <div class="brand-name">Swarovski</div>
-      <div class="brand-sub">Ecommerce · Reporte mensual</div>
+  <header>
+    <div class="brand">
+      <span class="brand-label">Performance Report</span>
+      <h1 class="brand-name">Swarovski</h1>
+      <span class="brand-sub">Canal Online · Argentina</span>
     </div>
-  </div>
-  <div class="header-meta">
-    <div class="period-label">Período analizado</div>
-    <div class="period-value">Enero 2026</div>
-    <div class="campaign-badge">◆ Campaña SALE activa 05–31/01</div>
-  </div>
-</header>
+    <div class="header-meta">
+      <p>Período analizado</p>
+      <p>Febrero — Marzo 2026</p>
+      <p>Fuente · Proyección Ventas Online</p>
+    </div>
+  </header>
 
-<div class="main">
+  <!-- TABS -->
+  <div class="period-tabs">
+    <button class="tab active" onclick="switchTab('feb')">Febrero 2026</button>
+    <button class="tab" onclick="switchTab('mar')">Marzo 2026</button>
+    <button class="tab" onclick="switchTab('comp')">Comparativo</button>
+  </div>
 
-  <!-- KPIs -->
-  <div class="section-label">Resultados del mes</div>
-  <div class="kpi-grid">
-    <div class="kpi-card">
-      <div class="kpi-label">Facturación real c/IVA</div>
-      <div class="kpi-value large">$230.4M</div>
-      <div class="kpi-compare">
-        Obj: $329.3M &nbsp; <span class="badge badge-danger">−30%</span>
+  <!-- ============ FEBRERO PANEL ============ -->
+  <div id="panel-feb" class="panel active">
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Ventas Totales Brutas</div>
+        <div class="kpi-value">$326M</div>
+        <div class="kpi-sub">IVA incluido · 28 días</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Ventas Netas</div>
+        <div class="kpi-value">$269M</div>
+        <div class="kpi-sub">Sin IVA · Total mes</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Pedidos Reales</div>
+        <div class="kpi-value">724</div>
+        <div class="kpi-sub">vs 504 Feb 2025</div>
+        <div class="kpi-badge up">↑ +43.7%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Ticket Promedio</div>
+        <div class="kpi-value">$450K</div>
+        <div class="kpi-sub">Promedio mes c/IVA</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Sesiones</div>
+        <div class="kpi-value">422K</div>
+        <div class="kpi-sub">Sesiones totales</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Objetivo mensual</div>
+        <div class="kpi-value">$295M</div>
+        <div class="kpi-sub">Total FC c/IVA objetivo</div>
+        <div class="kpi-badge up">↑ Superado</div>
       </div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Cumplimiento</div>
-      <div class="kpi-value">70%</div>
-      <div class="kpi-compare">Falta: $98.9M para objetivo</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Pedidos realizados</div>
-      <div class="kpi-value">559</div>
-      <div class="kpi-compare">
-        Obj: 998 &nbsp; <span class="badge badge-danger">−44%</span>
-      </div>
-    </div>
-    <div class="kpi-card highlight">
-      <div class="kpi-label">Ticket promedio real</div>
-      <div class="kpi-value large">$412K</div>
-      <div class="kpi-compare">
-        Obj: $330K &nbsp; <span class="badge badge-success">+25%</span>
-      </div>
-    </div>
-  </div>
 
-  <!-- PERFORMANCE DIGITAL -->
-  <div class="section-label">Performance digital</div>
-  <div class="kpi-grid" style="margin-bottom: 20px;">
-    <div class="kpi-card">
-      <div class="kpi-label">Sesiones totales</div>
-      <div class="kpi-value">478K</div>
-      <div class="kpi-compare">Acumulado del mes</div>
-    </div>
-    <div class="kpi-card highlight">
-      <div class="kpi-label">Conversión real</div>
-      <div class="kpi-value">0.117%</div>
-      <div class="kpi-compare">
-        Obj: 0.085% &nbsp; <span class="badge badge-success">+38%</span>
-      </div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Sesiones obj. diarias</div>
-      <div class="kpi-value">40K</div>
-      <div class="kpi-compare">Configurado uniforme</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Facturación neta s/IVA</div>
-      <div class="kpi-value large">$190.4M</div>
-      <div class="kpi-compare">Obj neto: $272.2M</div>
-    </div>
-  </div>
-
-  <!-- PROGRESS BAR -->
-  <div class="progress-section" style="margin-bottom: 40px;">
-    <div class="progress-header">
-      <span class="progress-title">Avance sobre objetivo mensual</span>
-      <span class="progress-numbers">$230.4M / $329.3M</span>
-    </div>
-    <div class="progress-bar-bg">
-      <div class="progress-bar-fill" style="width: 70%"></div>
-    </div>
-    <div class="progress-labels">
-      <span>$0</span>
-      <span style="color: var(--gold); font-weight:500;">70% completado</span>
-      <span>$329.3M</span>
-    </div>
-  </div>
-
-  <!-- CHARTS ROW 1 -->
-  <div class="section-label">Venta diaria</div>
-  <div class="charts-grid">
-    <div class="chart-card">
-      <div class="chart-title">
-        Facturación diaria c/IVA (ARS)
-        <div class="chart-legend">
-          <span class="legend-item"><span class="legend-dot" style="background:var(--gold)"></span>Real</span>
-          <span class="legend-item"><span class="legend-dot" style="background:rgba(255,255,255,0.2); height:1px; border-top: 2px dashed rgba(255,255,255,0.2)"></span>Objetivo</span>
+    <h2 class="section-title">Ventas Diarias</h2>
+    <div class="charts-row">
+      <div class="chart-box">
+        <div class="chart-box-title">Venta diaria real vs objetivo ($ c/IVA)</div>
+        <div class="chart-wrap" style="height:280px">
+          <canvas id="chart-feb-daily"></canvas>
         </div>
       </div>
-      <div style="position:relative; height:230px;"><canvas id="c1"></canvas></div>
+      <div class="chart-box">
+        <div class="chart-box-title">Pedidos por día</div>
+        <div class="chart-wrap" style="height:280px">
+          <canvas id="chart-feb-orders"></canvas>
+        </div>
+      </div>
     </div>
-    <div class="chart-card">
-      <div class="chart-title">Pedidos diarios</div>
-      <div style="position:relative; height:230px;"><canvas id="c2"></canvas></div>
+
+    <h2 class="section-title">Acumulado</h2>
+    <div class="chart-box" style="margin-bottom:48px">
+      <div class="chart-box-title">Acumulado real vs objetivo a lo largo del mes</div>
+      <div class="chart-wrap" style="height:260px">
+        <canvas id="chart-feb-cumul"></canvas>
+      </div>
     </div>
+
   </div>
 
-  <!-- CHARTS ROW 2 -->
-  <div class="charts-grid-2">
-    <div class="chart-card">
-      <div class="chart-title">Ticket promedio real por día (ARS)</div>
-      <div style="position:relative; height:180px;"><canvas id="c3"></canvas></div>
+  <!-- ============ MARZO PANEL ============ -->
+  <div id="panel-mar" class="panel">
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Ventas Totales Brutas</div>
+        <div class="kpi-value">$233M</div>
+        <div class="kpi-sub">IVA incluido · 31 días</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Ventas Netas</div>
+        <div class="kpi-value">$192M</div>
+        <div class="kpi-sub">Sin IVA · Total mes</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Pedidos Reales</div>
+        <div class="kpi-value">456</div>
+        <div class="kpi-sub">vs 482 Mar 2025</div>
+        <div class="kpi-badge down">↓ -5.4%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Ticket Promedio</div>
+        <div class="kpi-value">$511K</div>
+        <div class="kpi-sub">Promedio mes c/IVA</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Sesiones</div>
+        <div class="kpi-value">359K</div>
+        <div class="kpi-sub">Sesiones totales</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Objetivo mensual</div>
+        <div class="kpi-value">$306M</div>
+        <div class="kpi-sub">Total FC c/IVA objetivo</div>
+        <div class="kpi-badge down">↓ No alcanzado</div>
+      </div>
     </div>
-    <div class="chart-card">
-      <div class="chart-title">Sesiones reales por día</div>
-      <div style="position:relative; height:180px;"><canvas id="c4"></canvas></div>
+
+    <h2 class="section-title">Ventas Diarias</h2>
+    <div class="charts-row">
+      <div class="chart-box">
+        <div class="chart-box-title">Venta diaria real vs objetivo ($ c/IVA)</div>
+        <div class="chart-wrap" style="height:280px">
+          <canvas id="chart-mar-daily"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-box-title">Pedidos por día</div>
+        <div class="chart-wrap" style="height:280px">
+          <canvas id="chart-mar-orders"></canvas>
+        </div>
+      </div>
     </div>
+
+    <h2 class="section-title">Acumulado</h2>
+    <div class="chart-box" style="margin-bottom:48px">
+      <div class="chart-box-title">Acumulado real vs objetivo a lo largo del mes</div>
+      <div class="chart-wrap" style="height:260px">
+        <canvas id="chart-mar-cumul"></canvas>
+      </div>
+    </div>
+
   </div>
 
-  <!-- HIGHLIGHT DAYS -->
-  <div class="section-label">Días destacados</div>
-  <div class="days-grid">
-    <div class="day-card">
-      <div>
-        <div class="day-label">Mejor día de venta</div>
-        <div class="day-date">Viernes 30/01</div>
-      </div>
-      <div>
-        <div class="day-value">$18.1M</div>
-        <div class="day-sub">44 pedidos · SALE</div>
+  <!-- ============ COMPARATIVO PANEL ============ -->
+  <div id="panel-comp" class="panel">
+
+    <h2 class="section-title">Feb vs Mar · Indicadores clave</h2>
+
+    <div class="comparison-section">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Indicador</th>
+            <th>Febrero 2026</th>
+            <th>Marzo 2026</th>
+            <th>Var.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Venta bruta total</td>
+            <td>$326,165,806</td>
+            <td>$233,229,907</td>
+            <td class="val-down">↓ -28.5%</td>
+          </tr>
+          <tr>
+            <td>Venta neta total</td>
+            <td>$269,558,509</td>
+            <td>$192,751,989</td>
+            <td class="val-down">↓ -28.5%</td>
+          </tr>
+          <tr>
+            <td>Pedidos reales</td>
+            <td>724</td>
+            <td>456</td>
+            <td class="val-down">↓ -37.0%</td>
+          </tr>
+          <tr>
+            <td>Ticket promedio bruto</td>
+            <td>$450,505</td>
+            <td>$511,469</td>
+            <td class="val-up">↑ +13.5%</td>
+          </tr>
+          <tr>
+            <td>Sesiones totales</td>
+            <td>422,423</td>
+            <td>359,941</td>
+            <td class="val-down">↓ -14.8%</td>
+          </tr>
+          <tr>
+            <td>Conversión promedio</td>
+            <td>0.17%</td>
+            <td>0.13%</td>
+            <td class="val-down">↓ -26%</td>
+          </tr>
+          <tr>
+            <td>Objetivo mensual</td>
+            <td>$295,680,000</td>
+            <td>$306,900,000</td>
+            <td class="val-up">↑ +3.8%</td>
+          </tr>
+          <tr>
+            <td>Cumplimiento objetivo</td>
+            <td class="val-up">+10.3%</td>
+            <td class="val-down">−24.0%</td>
+            <td class="val-down">↓ −34pts</td>
+          </tr>
+          <tr>
+            <td>Días de operación</td>
+            <td>28</td>
+            <td>31</td>
+            <td class="val-up">↑ +3</td>
+          </tr>
+          <tr>
+            <td>Pedidos YoY (año anterior)</td>
+            <td>504 (Feb '25)</td>
+            <td>482 (Mar '25)</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>Variación pedidos vs año anterior</td>
+            <td class="val-up">+43.7%</td>
+            <td class="val-down">−5.4%</td>
+            <td class="val-down">↓</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="section-title">Ventas diarias · Comparativo</h2>
+    <div class="chart-box" style="margin-bottom:48px">
+      <div class="chart-box-title">Venta real diaria — Febrero (azul) vs Marzo (dorado)</div>
+      <div class="chart-wrap" style="height:300px">
+        <canvas id="chart-comp-daily"></canvas>
       </div>
     </div>
-    <div class="day-card">
-      <div>
-        <div class="day-label">Mejor ticket promedio</div>
-        <div class="day-date">Sábado 10/01</div>
-      </div>
-      <div>
-        <div class="day-value">$520K</div>
-        <div class="day-sub">15 pedidos · SALE</div>
-      </div>
-    </div>
-    <div class="day-card">
-      <div>
-        <div class="day-label">Día con menos ventas</div>
-        <div class="day-date">Jueves 29/01</div>
-      </div>
-      <div>
-        <div class="day-value">$3.5M</div>
-        <div class="day-sub">11 pedidos · SALE</div>
-      </div>
-    </div>
-    <div class="day-card">
-      <div>
-        <div class="day-label">Más pedidos en un día</div>
-        <div class="day-date">Viernes 30/01</div>
-      </div>
-      <div>
-        <div class="day-value">44 ped.</div>
-        <div class="day-sub">$410K ticket prom.</div>
+
+    <h2 class="section-title">Promociones activas</h2>
+    <div class="promo-section">
+      <div class="promo-grid">
+        <div class="promo-month">
+          <h4>Febrero 2026</h4>
+          <div class="promo-item"><span class="promo-date">01 / 02 / 09</span><span class="promo-text">AMEX 20% hasta 6 CSI</span></div>
+          <div class="promo-item"><span class="promo-date">02 / 03 / 16</span><span class="promo-text">CIUDAD 15% hasta 10 CSI sin tope</span></div>
+          <div class="promo-item"><span class="promo-date">06 / 13 / 20 / 27</span><span class="promo-text">GALICIA 20/25% descuento hasta 3 CSI sin tope</span></div>
+          <div class="promo-item"><span class="promo-date">11 / 12 / 13</span><span class="promo-text">AMEX 25% hasta 3 CSI "San Valentín"</span></div>
+          <div class="promo-item"><span class="promo-date">15 / 22</span><span class="promo-text">AMEX 20% hasta 6 CSI (fin de semana)</span></div>
+        </div>
+        <div class="promo-month">
+          <h4>Marzo 2026</h4>
+          <div class="promo-item"><span class="promo-date">08 / 09 / 15</span><span class="promo-text">AMEX 20% hasta 6 CSI</span></div>
+          <div class="promo-item"><span class="promo-date">06 / 13 / 20 / 27</span><span class="promo-text">GALICIA VIERNES 20/25% descuento</span></div>
+          <div class="promo-item"><span class="promo-date">22 / 23 / 29 / 30</span><span class="promo-text">AMEX 20% hasta 6 CSI (últimas semanas)</span></div>
+        </div>
       </div>
     </div>
-    <div class="day-card">
-      <div>
-        <div class="day-label">Inicio campaña SALE</div>
-        <div class="day-date">Lunes 05/01</div>
-      </div>
-      <div>
-        <div class="day-value">$7.7M</div>
-        <div class="day-sub">21 pedidos</div>
-      </div>
-    </div>
-    <div class="day-card">
-      <div>
-        <div class="day-label">San Valentín promo</div>
-        <div class="day-date">Martes 27/01</div>
-      </div>
-      <div>
-        <div class="day-value">$7.6M</div>
-        <div class="day-sub">23 pedidos</div>
-      </div>
-    </div>
+
   </div>
+
+  <footer>
+    <p>Swarovski · Dashboard Ventas Online · Feb–Mar 2026</p>
+    <p>Datos extraídos de Proyección Ventas Online</p>
+  </footer>
 
 </div>
 
-<footer class="page-footer">
-  <span class="footer-note">Datos extraídos del archivo de proyección · Swarovski Online Enero 2026 · Valores en ARS c/IVA salvo indicación</span>
-  <span class="footer-brand">SWAROVSKI · ECOMMERCE REPORT</span>
-</footer>
-
 <script>
-const dias = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31'];
-const promos = [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
-const realFC = [2264600,7438100,3683600,2184500,7656100,9200300,5458800,6640400,7477700,7806701,8217500,6495350,8734800,8208500,7171850,9594700,4345250,6991240,5110100,6844750,6855550,5526050,12127700,5873000,4920800,12286900,7612700,8718550,3458750,18082850,13373050];
-const objFC = [6600000,6600000,6600000,6600000,11220000,11220000,11220000,11220000,11220000,11220000,11220000,11220000,11220000,11220000,11220000,11220000,11220000,11220000,11220000,11220000,11220000,11220000,11220000,11220000,11220000,11220000,11220000,11220000,11220000,11220000,11220000];
-const pedReal = [6,15,9,6,21,24,14,16,18,15,18,16,23,17,18,26,13,16,14,18,15,14,26,12,11,27,23,21,11,44,32];
-const pedObj = [20,20,20,20,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34];
-const tickets = realFC.map((v,i) => pedReal[i] > 0 ? Math.round(v/pedReal[i]) : 0);
-const sesiones = [20954,19061,17003,18196,17981,16746,16766,15695,16238,13873,15211,14342,15138,15553,15989,16385,16153,16051,9919,9754,9648,9964,12952,17532,20970,15691,14956,13652,12159,14776,18963];
+// ─── DATA ───────────────────────────────────────────────────────────────────
 
-const gold = '#c8a96e';
-const goldFaint = 'rgba(200,169,110,0.35)';
-const objColor = 'rgba(255,255,255,0.18)';
-const textTick = 'rgba(200,169,110,0.4)';
-const grid = 'rgba(200,169,110,0.06)';
-
-const base = {
-  responsive: true, maintainAspectRatio: false,
-  plugins: { legend: { display: false } },
-  scales: {
-    x: { ticks: { font: { size: 9, family: 'DM Sans' }, color: textTick, maxRotation: 0, autoSkip: true, maxTicksLimit: 16 }, grid: { color: grid }, border: { color: grid } },
-    y: { ticks: { font: { size: 9, family: 'DM Sans' }, color: textTick }, grid: { color: grid }, border: { color: grid } }
-  }
+const FEB = {
+  days: Array.from({length:28}, (_,i) => i+1),
+  real: [9966800,11332380,11780450,12403450,18180650,35602050,11414600,12042950,21364900,18307150,19896050,12982450,17254700,9101420,7106200,6584300,6051500,6072100,7216200,14968500,3088800,8034000,10263600,7150118,4977100,7782430,9950700,5290300],
+  objetivo: Array(28).fill(11220000).map((_,i) => i < 4 ? 6600000 : 11220000),
+  pedidos: [21,33,27,37,41,57,27,28,48,47,46,26,34,21,13,16,19,13,15,25,11,18,23,16,11,18,20,13],
+  acumReal: [],
+  acumObj: []
 };
 
-// Chart 1 – Facturación
-new Chart(document.getElementById('c1'), {
-  type: 'bar',
-  data: {
-    labels: dias,
-    datasets: [
-      { label: 'Real', data: realFC, backgroundColor: dias.map((_, i) => promos[i] ? gold : 'rgba(200,169,110,0.55)'), borderRadius: 2, borderSkipped: false },
-      { label: 'Objetivo', data: objFC, type: 'line', borderColor: objColor, borderWidth: 1.5, pointRadius: 0, fill: false, borderDash: [5,4] }
-    ]
-  },
-  options: {
-    ...base,
-    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' $' + Math.round(ctx.parsed.y).toLocaleString('es-AR') } } },
-    scales: { ...base.scales, y: { ...base.scales.y, ticks: { ...base.scales.y.ticks, callback: v => '$' + (v/1000000).toFixed(0) + 'M' } } }
-  }
-});
+// Fix first 4 days objetivo
+FEB.objetivo = [6600000,6600000,6600000,6600000,...Array(24).fill(11220000)];
 
-// Chart 2 – Pedidos
-new Chart(document.getElementById('c2'), {
-  type: 'bar',
-  data: {
-    labels: dias,
-    datasets: [
-      { label: 'Real', data: pedReal, backgroundColor: 'rgba(200,169,110,0.6)', borderRadius: 2 },
-      { label: 'Obj', data: pedObj, type: 'line', borderColor: objColor, borderWidth: 1.5, pointRadius: 0, fill: false, borderDash: [5,4] }
-    ]
-  },
-  options: {
-    ...base,
-    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + ctx.parsed.y + ' pedidos' } } }
-  }
-});
+let cumR = 0, cumO = 0;
+FEB.real.forEach((v,i) => { cumR += v; FEB.acumReal.push(cumR); });
+FEB.objetivo.forEach((v,i) => { cumO += v; FEB.acumObj.push(cumO); });
 
-// Chart 3 – Ticket
-new Chart(document.getElementById('c3'), {
-  type: 'line',
-  data: {
-    labels: dias,
-    datasets: [{ data: tickets, borderColor: gold, borderWidth: 2, pointRadius: 2.5, pointBackgroundColor: gold, fill: true, backgroundColor: 'rgba(200,169,110,0.06)', tension: 0.35 }]
-  },
-  options: {
-    ...base,
-    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' $' + Math.round(ctx.parsed.y).toLocaleString('es-AR') } } },
-    scales: { ...base.scales, y: { ...base.scales.y, ticks: { ...base.scales.y.ticks, callback: v => '$' + (v/1000).toFixed(0) + 'K' } } }
-  }
-});
+const MAR = {
+  days: Array.from({length:31}, (_,i) => i+1),
+  real: [15266600,8562250,8445250,5541067.5,7369300,15008700,7686155,8420400,11126300,6498472.5,7259050,6747850,10769950,6587500,4448004,6410250,2856100,1955400,1917100,14512150,6967100,5052500,10497000,3228600,8728000,3993867.5,7329940,7223500,10225000,8677650,3918900],
+  objetivo: Array(31).fill(9900000),
+  pedidos: [26,22,18,13,11,30,10,18,24,17,16,11,21,10,14,16,8,7,5,19,12,9,15,7,14,10,18,12,17,17,9],
+  acumReal: [],
+  acumObj: []
+};
 
-// Chart 4 – Sesiones
-new Chart(document.getElementById('c4'), {
-  type: 'line',
-  data: {
-    labels: dias,
-    datasets: [{ data: sesiones, borderColor: '#6897c8', borderWidth: 2, pointRadius: 2.5, pointBackgroundColor: '#6897c8', fill: true, backgroundColor: 'rgba(104,151,200,0.07)', tension: 0.35 }]
-  },
-  options: {
-    ...base,
-    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + Math.round(ctx.parsed.y).toLocaleString('es-AR') + ' sesiones' } } }
-  }
-});
+let cumR2 = 0, cumO2 = 0;
+MAR.real.forEach((v,i) => { cumR2 += v; MAR.acumReal.push(cumR2); });
+MAR.objetivo.forEach((v,i) => { cumO2 += v; MAR.acumObj.push(cumO2); });
+
+// ─── CHART DEFAULTS ─────────────────────────────────────────────────────────
+Chart.defaults.color = '#888';
+Chart.defaults.font.family = "'DM Mono', monospace";
+Chart.defaults.font.size = 10;
+
+function makeBarLine(id, labels, barData, lineData, barLabel, lineLabel, barColor) {
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  return new Chart(ctx, {
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          type: 'bar',
+          label: barLabel,
+          data: barData,
+          backgroundColor: barColor + '66',
+          borderColor: barColor,
+          borderWidth: 1,
+        },
+        {
+          type: 'line',
+          label: lineLabel,
+          data: lineData,
+          borderColor: '#555',
+          borderWidth: 1.5,
+          borderDash: [4,4],
+          pointRadius: 0,
+          fill: false,
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { display: true, labels: { boxWidth: 10, font: { size: 9 } } } },
+      scales: {
+        x: { grid: { color: 'rgba(201,168,76,0.07)' }, ticks: { maxTicksLimit: 14 } },
+        y: {
+          grid: { color: 'rgba(201,168,76,0.07)' },
+          ticks: {
+            callback: v => v >= 1e6 ? '$' + (v/1e6).toFixed(0) + 'M' : '$' + v.toLocaleString()
+          }
+        }
+      }
+    }
+  });
+}
+
+function makeBar(id, labels, data, color) {
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  return new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Pedidos',
+        data,
+        backgroundColor: color + '88',
+        borderColor: color,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(201,168,76,0.07)' }, ticks: { maxTicksLimit: 14 } },
+        y: { grid: { color: 'rgba(201,168,76,0.07)' } }
+      }
+    }
+  });
+}
+
+function makeLine(id, labels, datasets) {
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  return new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { display: true, labels: { boxWidth: 10, font: { size: 9 } } } },
+      scales: {
+        x: { grid: { color: 'rgba(201,168,76,0.07)' }, ticks: { maxTicksLimit: 14 } },
+        y: {
+          grid: { color: 'rgba(201,168,76,0.07)' },
+          ticks: {
+            callback: v => '$' + (v/1e6).toFixed(0) + 'M'
+          }
+        }
+      }
+    }
+  });
+}
+
+// ─── INIT CHARTS ────────────────────────────────────────────────────────────
+const GOLD = '#c9a84c';
+const BLUE = '#4c8bc9';
+
+makeBarLine('chart-feb-daily', FEB.days, FEB.real, FEB.objetivo, 'Venta real', 'Objetivo diario', GOLD);
+makeBar('chart-feb-orders', FEB.days, FEB.pedidos, GOLD);
+makeLine('chart-feb-cumul', FEB.days, [
+  { label: 'Acumulado real', data: FEB.acumReal, borderColor: GOLD, borderWidth: 2, pointRadius: 0, fill: false },
+  { label: 'Acumulado objetivo', data: FEB.acumObj, borderColor: '#555', borderWidth: 1.5, borderDash: [4,4], pointRadius: 0, fill: false }
+]);
+
+makeBarLine('chart-mar-daily', MAR.days, MAR.real, MAR.objetivo, 'Venta real', 'Objetivo diario', GOLD);
+makeBar('chart-mar-orders', MAR.days, MAR.pedidos, GOLD);
+makeLine('chart-mar-cumul', MAR.days, [
+  { label: 'Acumulado real', data: MAR.acumReal, borderColor: GOLD, borderWidth: 2, pointRadius: 0, fill: false },
+  { label: 'Acumulado objetivo', data: MAR.acumObj, borderColor: '#555', borderWidth: 1.5, borderDash: [4,4], pointRadius: 0, fill: false }
+]);
+
+// Comparativo — overlay feb vs mar (padded to 31 days)
+const febPadded = [...FEB.real, ...Array(3).fill(null)];
+const marData = MAR.real;
+const maxDays = Array.from({length:31}, (_,i) => i+1);
+makeLine('chart-comp-daily', maxDays, [
+  { label: 'Febrero', data: febPadded, borderColor: BLUE, borderWidth: 2, pointRadius: 2, fill: false, spanGaps: false },
+  { label: 'Marzo', data: marData, borderColor: GOLD, borderWidth: 2, pointRadius: 2, fill: false }
+]);
+
+// ─── TABS ────────────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+  const idx = ['feb','mar','comp'].indexOf(tab);
+  document.querySelectorAll('.tab')[idx].classList.add('active');
+}
 </script>
 </body>
 </html>
