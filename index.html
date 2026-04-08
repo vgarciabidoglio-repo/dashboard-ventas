@@ -130,6 +130,11 @@ section { margin-bottom: 56px; }
 .hl-val { font-family: 'Noto Serif', serif; font-size: 20px; font-weight: 300; color: var(--gold); }
 .hl-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
 
+/* COMP BUTTONS */
+.comp-btn { font-family:'Noto Sans',sans-serif; font-size:11px; font-weight:500; letter-spacing:0.06em; padding:6px 16px; border-radius:2px; border:1px solid var(--border); background:transparent; color:var(--text2); cursor:pointer; transition:all 0.2s; }
+.comp-btn:hover { color:var(--gold); border-color:rgba(200,169,110,0.4); }
+.comp-btn.active { background:var(--dark3); color:var(--gold); border-color:rgba(200,169,110,0.5); }
+
 /* FOOTER */
 footer { border-top: 1px solid var(--border); padding: 20px 48px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
 .footer-note { font-size: 11px; color: var(--text3); }
@@ -173,7 +178,7 @@ footer { border-top: 1px solid var(--border); padding: 20px 48px; display: flex;
     <div class="hero-meta-item"><label>Período</label><span>Enero – Marzo 2026</span></div>
     <div class="hero-meta-item"><label>Canal</label><span>Swarovski.com.ar</span></div>
     <div class="hero-meta-item"><label>Moneda</label><span>ARS c/ IVA</span></div>
-    <div class="hero-meta-item"><label>Elaborado por</label><span>Ecommerce · StyleStore</span></div>
+    <div class="hero-meta-item"><label>Elaborado por</label><span>Ecommerce · TEAM digital</span></div>
   </div>
 </div>
 
@@ -442,6 +447,47 @@ footer { border-top: 1px solid var(--border); padding: 20px 48px; display: flex;
       </div>
     </div>
   </div>
+
+  <!-- COMPARATIVA ENTRE MESES -->
+  <div style="margin-top:28px;">
+    <div class="section-head" style="margin-bottom:16px;"><span class="section-label">Comparativa entre meses</span><div class="section-line"></div></div>
+
+    <!-- Selector de métrica -->
+    <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
+      <button class="comp-btn active" onclick="switchComp('fc')">Facturación diaria</button>
+      <button class="comp-btn" onclick="switchComp('ped')">Pedidos diarios</button>
+      <button class="comp-btn" onclick="switchComp('tick')">Ticket promedio</button>
+      <button class="comp-btn" onclick="switchComp('ses')">Sesiones</button>
+    </div>
+
+    <!-- Legend fija -->
+    <div style="display:flex; gap:20px; margin-bottom:12px; flex-wrap:wrap;">
+      <span class="leg-item"><span class="leg-dot" style="background:var(--warn); width:24px; height:3px;"></span><span style="font-size:11px; color:var(--text2);">Enero (31 días)</span></span>
+      <span class="leg-item"><span class="leg-dot" style="background:var(--ok); width:24px; height:3px;"></span><span style="font-size:11px; color:var(--text2);">Febrero (28 días)</span></span>
+      <span class="leg-item"><span class="leg-dot" style="background:var(--info); width:24px; height:3px;"></span><span style="font-size:11px; color:var(--text2);">Marzo (31 días)</span></span>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title" id="compTitle">Facturación diaria — comparativa entre meses (ARS c/IVA)</div>
+      <div style="position:relative;height:260px;"><canvas id="cComp"></canvas></div>
+    </div>
+
+    <!-- Mini stats row -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:12px;" id="compStats">
+      <div class="chart-card" style="padding:14px 18px;">
+        <div class="chart-title" style="color:var(--warn); margin-bottom:8px;">Enero</div>
+        <div id="compStatEne" style="font-size:12px; color:var(--text2); line-height:1.8;"></div>
+      </div>
+      <div class="chart-card" style="padding:14px 18px;">
+        <div class="chart-title" style="color:var(--ok); margin-bottom:8px;">Febrero</div>
+        <div id="compStatFeb" style="font-size:12px; color:var(--text2); line-height:1.8;"></div>
+      </div>
+      <div class="chart-card" style="padding:14px 18px;">
+        <div class="chart-title" style="color:var(--info); margin-bottom:8px;">Marzo</div>
+        <div id="compStatMar" style="font-size:12px; color:var(--text2); line-height:1.8;"></div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- HIGHLIGHTS -->
@@ -665,6 +711,109 @@ mChart('cTickMes','bar',['Enero','Febrero','Marzo'],
   [{data:[412,450,511],backgroundColor:[warnCol+'aa',okCol+'aa',infoCol+'aa'],borderRadius:3}],
   {...baseScales,y:{...baseScales.y,ticks:{...baseScales.y.ticks,callback:v=>'$'+v+'K'}}},
   basePlugins(v=>'$'+v+'K'));
+
+// ── COMPARATIVA ENTRE MESES ────────────────────────────────
+const compData = {
+  fc: {
+    title: 'Facturación diaria — comparativa entre meses (ARS c/IVA)',
+    ene: eneReal, feb: febReal, mar: marReal,
+    yFmt: v=>'$'+(v/1000000).toFixed(1)+'M',
+    tipFmt: fM,
+    stats: [
+      {prom: Math.round(eneReal.reduce((a,b)=>a+b,0)/eneReal.length), max: Math.max(...eneReal), min: Math.min(...eneReal), total: eneReal.reduce((a,b)=>a+b,0)},
+      {prom: Math.round(febReal.reduce((a,b)=>a+b,0)/febReal.length), max: Math.max(...febReal), min: Math.min(...febReal), total: febReal.reduce((a,b)=>a+b,0)},
+      {prom: Math.round(marReal.reduce((a,b)=>a+b,0)/marReal.length), max: Math.max(...marReal), min: Math.min(...marReal), total: marReal.reduce((a,b)=>a+b,0)},
+    ],
+    statFmt: v=>'$'+(v/1000000).toFixed(1)+'M'
+  },
+  ped: {
+    title: 'Pedidos diarios — comparativa entre meses',
+    ene: enePedR, feb: febPedR, mar: marPedR,
+    yFmt: v=>Math.round(v)+'',
+    tipFmt: v=>Math.round(v)+' ped.',
+    stats: [
+      {prom: (enePedR.reduce((a,b)=>a+b,0)/enePedR.length).toFixed(1), max: Math.max(...enePedR), min: Math.min(...enePedR), total: enePedR.reduce((a,b)=>a+b,0)},
+      {prom: (febPedR.reduce((a,b)=>a+b,0)/febPedR.length).toFixed(1), max: Math.max(...febPedR), min: Math.min(...febPedR), total: febPedR.reduce((a,b)=>a+b,0)},
+      {prom: (marPedR.reduce((a,b)=>a+b,0)/marPedR.length).toFixed(1), max: Math.max(...marPedR), min: Math.min(...marPedR), total: marPedR.reduce((a,b)=>a+b,0)},
+    ],
+    statFmt: v=>v+' ped.'
+  },
+  tick: {
+    title: 'Ticket promedio diario — comparativa entre meses (ARS)',
+    ene: eneTick, feb: febTick, mar: marTick,
+    yFmt: v=>'$'+(v/1000).toFixed(0)+'K',
+    tipFmt: fK,
+    stats: [
+      {prom: Math.round(eneTick.reduce((a,b)=>a+b,0)/eneTick.length), max: Math.max(...eneTick), min: Math.min(...eneTick), total: null},
+      {prom: Math.round(febTick.reduce((a,b)=>a+b,0)/febTick.length), max: Math.max(...febTick), min: Math.min(...febTick), total: null},
+      {prom: Math.round(marTick.reduce((a,b)=>a+b,0)/marTick.length), max: Math.max(...marTick), min: Math.min(...marTick), total: null},
+    ],
+    statFmt: v=>'$'+(v/1000).toFixed(0)+'K'
+  },
+  ses: {
+    title: 'Sesiones diarias — comparativa entre meses',
+    ene: eneSes, feb: febSes, mar: marSes,
+    yFmt: v=>(v/1000).toFixed(0)+'K',
+    tipFmt: v=>Math.round(v).toLocaleString('es-AR')+' ses.',
+    stats: [
+      {prom: Math.round(eneSes.reduce((a,b)=>a+b,0)/eneSes.length), max: Math.max(...eneSes), min: Math.min(...eneSes), total: eneSes.reduce((a,b)=>a+b,0)},
+      {prom: Math.round(febSes.reduce((a,b)=>a+b,0)/febSes.length), max: Math.max(...febSes), min: Math.min(...febSes), total: febSes.reduce((a,b)=>a+b,0)},
+      {prom: Math.round(marSes.reduce((a,b)=>a+b,0)/marSes.length), max: Math.max(...marSes), min: Math.min(...marSes), total: marSes.reduce((a,b)=>a+b,0)},
+    ],
+    statFmt: v=>Math.round(v).toLocaleString('es-AR')
+  }
+};
+
+// max days = 31, pad feb to 31
+const pad = (arr, len=31) => arr.length >= len ? arr : [...arr, ...Array(len-arr.length).fill(null)];
+const dayLabels = Array.from({length:31},(_,i)=>'Día '+(i+1));
+
+let compChart = null;
+let currentComp = 'fc';
+
+function buildStats(key) {
+  const d = compData[key];
+  const ids = ['compStatEne','compStatFeb','compStatMar'];
+  const labels = ['Enero','Febrero','Marzo'];
+  d.stats.forEach((s,i) => {
+    const sf = d.statFmt;
+    let html = `Promedio: <strong style="color:var(--text)">${sf(s.prom)}</strong><br>
+                Máximo: <strong style="color:var(--text)">${sf(s.max)}</strong><br>
+                Mínimo: <strong style="color:var(--text)">${sf(s.min)}</strong>`;
+    if(s.total !== null) html += `<br>Total: <strong style="color:var(--text)">${sf(s.total)}</strong>`;
+    document.getElementById(ids[i]).innerHTML = html;
+  });
+}
+
+function switchComp(key) {
+  currentComp = key;
+  document.querySelectorAll('.comp-btn').forEach((b,i)=>b.classList.toggle('active',['fc','ped','tick','ses'][i]===key));
+  const d = compData[key];
+  document.getElementById('compTitle').textContent = d.title;
+  if(compChart) { compChart.destroy(); compChart = null; }
+  compChart = new Chart(document.getElementById('cComp'), {
+    type: 'line',
+    data: {
+      labels: dayLabels,
+      datasets: [
+        {label:'Enero', data:pad(d.ene), borderColor:warnCol, borderWidth:2, pointRadius:2.5, pointBackgroundColor:warnCol, fill:false, tension:0.3, spanGaps:false},
+        {label:'Febrero', data:pad(d.feb), borderColor:okCol, borderWidth:2, pointRadius:2.5, pointBackgroundColor:okCol, fill:false, tension:0.3, spanGaps:false},
+        {label:'Marzo', data:pad(d.mar), borderColor:infoCol, borderWidth:2, pointRadius:2.5, pointBackgroundColor:infoCol, fill:false, tension:0.3, spanGaps:false},
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+d.tipFmt(ctx.parsed.y)}} },
+      scales:{
+        x:{ticks:{font:{size:9,family:'Noto Sans'},color:tickC,maxRotation:0,autoSkip:true,maxTicksLimit:16},grid:{color:gridC},border:{color:gridC}},
+        y:{ticks:{font:{size:9,family:'Noto Sans'},color:tickC,callback:d.yFmt},grid:{color:gridC},border:{color:gridC}}
+      }
+    }
+  });
+  buildStats(key);
+}
+
+switchComp('fc');
 </script>
 </body>
 </html>
